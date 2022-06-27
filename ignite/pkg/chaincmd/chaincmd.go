@@ -31,12 +31,12 @@ const (
 	optionRecover                          = "--recover"
 	optionAddress                          = "--address"
 	optionAmount                           = "--amount"
+	optionGasPrices                        = "--gas-prices"
 	optionValidatorMoniker                 = "--moniker"
 	optionValidatorCommissionRate          = "--commission-rate"
 	optionValidatorCommissionMaxRate       = "--commission-max-rate"
 	optionValidatorCommissionMaxChangeRate = "--commission-max-change-rate"
 	optionValidatorMinSelfDelegation       = "--min-self-delegation"
-	optionValidatorGasPrices               = "--gas-prices"
 	optionValidatorDetails                 = "--details"
 	optionValidatorIdentity                = "--identity"
 	optionValidatorWebsite                 = "--website"
@@ -74,6 +74,7 @@ type ChainCmd struct {
 	cliHome         string
 	nodeAddress     string
 	legacySend      bool
+	gasPrices       string
 
 	isAutoChainIDDetectionEnabled bool
 
@@ -180,6 +181,13 @@ func WithLaunchpadCLIHome(cliHome string) Option {
 func WithLegacySendCommand() Option {
 	return func(c *ChainCmd) {
 		c.legacySend = true
+	}
+}
+
+// WithGasPrices provides gas price option
+func WithGasPrices(gasPrices string) Option {
+	return func(c *ChainCmd) {
+		c.gasPrices = gasPrices
 	}
 }
 
@@ -356,7 +364,7 @@ func GentxWithMinSelfDelegation(minSelfDelegation string) GentxOption {
 func GentxWithGasPrices(gasPrices string) GentxOption {
 	return func(command []string) []string {
 		if len(gasPrices) > 0 {
-			return append(command, optionValidatorGasPrices, gasPrices)
+			return append(command, optionGasPrices, gasPrices)
 		}
 		return command
 	}
@@ -639,6 +647,14 @@ func (c ChainCmd) attachHome(command []string) []string {
 func (c ChainCmd) attachNode(command []string) []string {
 	if c.nodeAddress != "" {
 		command = append(command, []string{optionNode, c.nodeAddress}...)
+	}
+	return command
+}
+
+// attachGasPrices appends the gasPrices flag to the provided command
+func (c ChainCmd) attachGasPrices(command []string) []string {
+	if c.gasPrices != "" {
+		command = append(command, []string{optionGasPrices, c.gasPrices}...)
 	}
 	return command
 }
