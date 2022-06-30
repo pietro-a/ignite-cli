@@ -540,6 +540,7 @@ func (c ChainCmd) BankSendCommand(fromAddress, toAddress, amount string) step.Op
 	command = c.attachChainID(command)
 	command = c.attachKeyringBackend(command)
 	command = c.attachNode(command)
+	command = c.attachGasPrices(command)
 
 	if c.sdkVersion.IsFamily(cosmosver.Launchpad) {
 		command = append(command, optionOutput, constJSON)
